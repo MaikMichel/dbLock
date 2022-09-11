@@ -1,0 +1,11 @@
+# dbFlow target infos
+apply.env
+
+# static files
+static/f*/dist
+
+# vscode configuration
+.vscode
+
+# depot inside wording dir
+_depot
