@@ -1,4 +1,18 @@
-drop table locked_files;
+prompt Drop table locked_files if exists
+declare
+  l_check number(1) := 0;
+begin
+  select 1
+    into l_check
+    from user_tables
+   where table_name = upper('locked_files');
+  dbms_output.put_line('drop table locked_files');
+  execute immediate 'drop table locked_files';
+exception
+  when no_data_found then
+    null; -- ok, nothing to drop
+end;
+/
 
 create table locked_files (
   lfs_id               number                    not null,
@@ -66,7 +80,7 @@ end locked_files_biud;
 BEGIN
   ORDS.ENABLE_SCHEMA(
       p_enabled             => TRUE,
-      p_schema              => 'DBLOCK',
+      p_schema              => user,
       p_url_mapping_type    => 'BASE_PATH',
       p_url_mapping_pattern => 'dblock',
       p_auto_rest_auth      => FALSE);
