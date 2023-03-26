@@ -78,12 +78,24 @@ end locked_files_biud;
 -- Schema: DBLOCK   Date: Tue Sep 13 11:59:19 CEST 2022
 --
 BEGIN
-  ORDS.ENABLE_SCHEMA(
-      p_enabled             => TRUE,
-      p_schema              => user,
-      p_url_mapping_type    => 'BASE_PATH',
-      p_url_mapping_pattern => 'dblock',
-      p_auto_rest_auth      => FALSE);
+  declare
+    l_check number(1);
+  begin
+    select 1
+      into l_check
+      from user_ords_schemas
+     where parsing_schema = user;
+
+    ORDS.ENABLE_SCHEMA(p_enabled             => TRUE);
+  exception
+    when no_data_found then
+      ORDS.ENABLE_SCHEMA(
+        p_enabled             => TRUE,
+        p_schema              => user,
+        p_url_mapping_type    => 'BASE_PATH',
+        p_url_mapping_pattern => 'dblock',
+        p_auto_rest_auth      => FALSE);
+  end;
 
   ORDS.DEFINE_MODULE(
       p_module_name    => 'dblock',

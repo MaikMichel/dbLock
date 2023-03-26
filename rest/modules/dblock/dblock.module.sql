@@ -3,19 +3,32 @@
 -- Schema: DBLOCK   Date: Tue Sep 13 11:59:19 CEST 2022
 --
 BEGIN
-  ORDS.ENABLE_SCHEMA(
-      p_enabled             => TRUE,
-      p_schema              => 'DBLOCK',
-      p_url_mapping_type    => 'BASE_PATH',
-      p_url_mapping_pattern => 'dblock',
-      p_auto_rest_auth      => FALSE);    
+
+  declare
+    l_check number(1);
+  begin
+    select 1
+      into l_check
+      from user_ords_schemas
+     where parsing_schema = user;
+
+    ORDS.ENABLE_SCHEMA(p_enabled             => TRUE);
+  exception
+    when no_data_found then
+      ORDS.ENABLE_SCHEMA(
+        p_enabled             => TRUE,
+        p_schema              => user,
+        p_url_mapping_type    => 'BASE_PATH',
+        p_url_mapping_pattern => 'dblock',
+        p_auto_rest_auth      => FALSE);
+  end;
 
   ORDS.DEFINE_MODULE(
       p_module_name    => 'dblock',
       p_base_path      => '/dblock/v1/',
       p_items_per_page =>  25,
       p_status         => 'PUBLISHED',
-      p_comments       => NULL);      
+      p_comments       => NULL);
   ORDS.DEFINE_TEMPLATE(
       p_module_name    => 'dblock',
       p_pattern        => 'files/:workspace',
@@ -31,7 +44,7 @@ BEGIN
       p_items_per_page =>  0,
       p_mimes_allowed  => '',
       p_comments       => NULL,
-      p_source         => 
+      p_source         =>
 'select *
   from locked_files
  where lfs_workspace = :workspace
@@ -48,7 +61,7 @@ BEGIN
       p_source_type        => 'HEADER',
       p_param_type         => 'STRING',
       p_access_method      => 'IN',
-      p_comments           => NULL);      
+      p_comments           => NULL);
   ORDS.DEFINE_TEMPLATE(
       p_module_name    => 'dblock',
       p_pattern        => 'file/:workspace',
@@ -64,7 +77,7 @@ BEGIN
       p_items_per_page =>  0,
       p_mimes_allowed  => 'application/json',
       p_comments       => NULL,
-      p_source         => 
+      p_source         =>
 'declare
     l_response json_object_t := json_object_t();
 begin
@@ -99,7 +112,7 @@ end;
       p_source_type        => 'URI',
       p_param_type         => 'STRING',
       p_access_method      => 'IN',
-      p_comments           => NULL);      
+      p_comments           => NULL);
   ORDS.DEFINE_PARAMETER(
       p_module_name        => 'dblock',
       p_pattern            => 'file/:workspace',
@@ -109,7 +122,7 @@ end;
       p_source_type        => 'HEADER',
       p_param_type         => 'STRING',
       p_access_method      => 'IN',
-      p_comments           => NULL);      
+      p_comments           => NULL);
   ORDS.DEFINE_PARAMETER(
       p_module_name        => 'dblock',
       p_pattern            => 'file/:workspace',
@@ -119,7 +132,7 @@ end;
       p_source_type        => 'HEADER',
       p_param_type         => 'STRING',
       p_access_method      => 'IN',
-      p_comments           => NULL);      
+      p_comments           => NULL);
   ORDS.DEFINE_HANDLER(
       p_module_name    => 'dblock',
       p_pattern        => 'file/:workspace',
@@ -128,7 +141,7 @@ end;
       p_items_per_page =>  0,
       p_mimes_allowed  => '',
       p_comments       => NULL,
-      p_source         => 
+      p_source         =>
 'select *
   from locked_files
  where lfs_workspace = :workspace
@@ -146,7 +159,7 @@ end;
       p_source_type        => 'URI',
       p_param_type         => 'STRING',
       p_access_method      => 'IN',
-      p_comments           => NULL);      
+      p_comments           => NULL);
   ORDS.DEFINE_PARAMETER(
       p_module_name        => 'dblock',
       p_pattern            => 'file/:workspace',
@@ -156,7 +169,7 @@ end;
       p_source_type        => 'HEADER',
       p_param_type         => 'STRING',
       p_access_method      => 'IN',
-      p_comments           => NULL);      
+      p_comments           => NULL);
   ORDS.DEFINE_HANDLER(
       p_module_name    => 'dblock',
       p_pattern        => 'file/:workspace',
@@ -165,7 +178,7 @@ end;
       p_items_per_page =>  0,
       p_mimes_allowed  => '',
       p_comments       => NULL,
-      p_source         => 
+      p_source         =>
 'declare
     l_response json_object_t := json_object_t();
 begin
@@ -196,7 +209,7 @@ end;      '
       p_source_type        => 'URI',
       p_param_type         => 'STRING',
       p_access_method      => 'IN',
-      p_comments           => NULL);      
+      p_comments           => NULL);
   ORDS.DEFINE_PARAMETER(
       p_module_name        => 'dblock',
       p_pattern            => 'file/:workspace',
@@ -206,9 +219,9 @@ end;      '
       p_source_type        => 'HEADER',
       p_param_type         => 'STRING',
       p_access_method      => 'IN',
-      p_comments           => NULL);      
+      p_comments           => NULL);
 
 
-  COMMIT; 
+  COMMIT;
 END;
 /
